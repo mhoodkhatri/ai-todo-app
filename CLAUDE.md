@@ -212,6 +212,16 @@ See `.specify/memory/constitution.md` for code quality, testing, performance, se
 ## Active Technologies
 - Python 3.13+ + Python standard library only (dataclasses, datetime) (001-console-todo-app)
 - In-memory dictionary (no file or database persistence) (001-console-todo-app)
+- TypeScript 5.x (Next.js 16+), Python 3.13+ (FastAPI) (002-fullstack-todo-app)
+- Neon Serverless PostgreSQL (single database — Better Auth tables + application tables) (002-fullstack-todo-app)
+
+## Monorepo Structure (002-fullstack-todo-app)
+- `frontend/` — Next.js 16+ (App Router, TypeScript, Tailwind CSS, Better Auth, Zod)
+- `backend/` — FastAPI (SQLModel, asyncpg, PyJWT, Alembic)
+- Shared env vars: DATABASE_URL, BETTER_AUTH_SECRET (identical in both services)
+- Dev workflow: two terminals — `backend/` on port 8000, `frontend/` on port 3000
+- See `frontend/CLAUDE.md` and `backend/CLAUDE.md` for service-specific conventions
 
 ## Recent Changes
+- 002-fullstack-todo-app Part 1: Monorepo scaffold, Better Auth + JWT (EdDSA via JWKS), auth pages, route protection
 - 001-console-todo-app: Added Python 3.13+ + Python standard library only (dataclasses, datetime)
