@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { TaskList } from "@/components/tasks/task-list";
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({
@@ -21,11 +22,7 @@ export default async function DashboardPage() {
         </div>
       </header>
       <main className="mx-auto max-w-4xl px-4 py-8">
-        <div className="rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center">
-          <p className="text-gray-500">
-            No tasks yet — you&apos;ll be able to create tasks in Part 2.
-          </p>
-        </div>
+        <TaskList />
       </main>
     </div>
   );
