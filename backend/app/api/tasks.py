@@ -1,7 +1,9 @@
 from datetime import datetime, timezone
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Literal
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -34,11 +36,15 @@ async def create_task(
 async def list_tasks(
     user_id: str = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
+    status: Literal["all", "completed", "incomplete"] = Query(default="all"),
 ) -> list[Task]:
+    query = select(Task).where(Task.user_id == user_id)
+    if status == "completed":
+        query = query.where(Task.is_completed == True)  # noqa: E712
+    elif status == "incomplete":
+        query = query.where(Task.is_completed == False)  # noqa: E712
     result = await session.exec(
-        select(Task)
-        .where(Task.user_id == user_id)
-        .order_by(Task.created_at.desc())  # type: ignore[union-attr]
+        query.order_by(Task.created_at.desc())  # type: ignore[union-attr]
     )
     return list(result.all())
 

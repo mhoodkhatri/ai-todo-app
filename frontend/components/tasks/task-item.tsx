@@ -132,7 +132,7 @@ export function TaskItem({ task, onUpdated }: TaskItemProps) {
           <button
             type="submit"
             disabled={saving}
-            className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            className="min-h-[44px] rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-xs"
           >
             {saving ? "Saving..." : "Save"}
           </button>
@@ -140,7 +140,7 @@ export function TaskItem({ task, onUpdated }: TaskItemProps) {
             type="button"
             onClick={cancelEdit}
             disabled={saving}
-            className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            className="min-h-[44px] rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-xs"
           >
             Cancel
           </button>
@@ -152,67 +152,71 @@ export function TaskItem({ task, onUpdated }: TaskItemProps) {
   return (
     <>
       <div
-        className={`flex items-start gap-3 rounded-lg border bg-white p-4 ${
+        className={`rounded-lg border bg-white p-4 ${
           task.is_completed ? "border-gray-200 opacity-60" : "border-gray-200"
         }`}
       >
-        <button
-          onClick={handleToggle}
-          disabled={toggling}
-          className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded border ${
-            task.is_completed
-              ? "border-green-500 bg-green-500 text-white"
-              : "border-gray-300 hover:border-gray-400"
-          }`}
-          aria-label={task.is_completed ? "Mark incomplete" : "Mark complete"}
-        >
-          {task.is_completed && (
-            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-          )}
-        </button>
-
-        <div className="min-w-0 flex-1">
-          <p
-            className={`text-sm font-medium ${
-              task.is_completed ? "text-gray-400 line-through" : "text-gray-900"
+        <div className="flex items-start gap-3">
+          <button
+            onClick={handleToggle}
+            disabled={toggling}
+            className={`mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border md:h-5 md:w-5 ${
+              task.is_completed
+                ? "border-green-500 bg-green-500 text-white"
+                : "border-gray-300 hover:border-gray-400"
             }`}
+            aria-label={task.is_completed ? "Mark incomplete" : "Mark complete"}
           >
-            {task.title}
-          </p>
-          {task.description && (
-            <p
-              className={`mt-1 text-xs ${
-                task.is_completed ? "text-gray-400 line-through" : "text-gray-500"
-              }`}
-            >
-              {task.description}
-            </p>
-          )}
-          <p className="mt-1 text-xs text-gray-400">{createdDate}</p>
-          {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-        </div>
+            {task.is_completed && (
+              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            )}
+          </button>
 
-        <div className="flex flex-shrink-0 gap-1">
-          <button
-            onClick={startEdit}
-            className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-            aria-label="Edit task"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-          </button>
-          <button
-            onClick={() => setShowDeleteDialog(true)}
-            className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-600"
-            aria-label="Delete task"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </button>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-col md:flex-row md:items-baseline md:gap-3">
+              <p
+                className={`text-sm font-medium ${
+                  task.is_completed ? "text-gray-400 line-through" : "text-gray-900"
+                }`}
+              >
+                {task.title}
+              </p>
+              <p className="text-xs text-gray-400">{createdDate}</p>
+            </div>
+            {task.description && (
+              <p
+                className={`mt-1 text-xs ${
+                  task.is_completed ? "text-gray-400 line-through" : "text-gray-500"
+                }`}
+              >
+                {task.description}
+              </p>
+            )}
+            {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+          </div>
+
+          <div className="flex flex-shrink-0 gap-1">
+            <button
+              onClick={startEdit}
+              className="flex h-9 w-9 items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-600 md:h-7 md:w-7"
+              aria-label="Edit task"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </button>
+            <button
+              onClick={() => setShowDeleteDialog(true)}
+              className="flex h-9 w-9 items-center justify-center rounded text-gray-400 hover:bg-red-50 hover:text-red-600 md:h-7 md:w-7"
+              aria-label="Delete task"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 

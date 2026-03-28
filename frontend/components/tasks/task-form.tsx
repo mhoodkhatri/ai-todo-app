@@ -50,7 +50,7 @@ export function TaskForm({ onTaskCreated }: TaskFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6 rounded-lg border border-gray-200 bg-white p-4">
+    <form onSubmit={handleSubmit} className="mb-6 rounded-lg border border-gray-200 bg-white p-4 lg:mx-auto lg:max-w-2xl">
       <div className="mb-3">
         <input
           type="text"
@@ -83,7 +83,7 @@ export function TaskForm({ onTaskCreated }: TaskFormProps) {
       <button
         type="submit"
         disabled={submitting}
-        className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        className="min-h-[44px] w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 sm:w-auto"
       >
         {submitting ? "Adding..." : "Add Task"}
       </button>

@@ -40,14 +40,14 @@ export function TaskList() {
     <div>
       <TaskForm onTaskCreated={fetchTasks} />
 
-      <div className="mb-4 flex gap-1 rounded-lg border border-gray-200 bg-white p-1">
+      <div className="mb-4 flex flex-col gap-1 rounded-lg border border-gray-200 bg-white p-1 sm:flex-row">
         {(["all", "incomplete", "completed"] as const).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium capitalize transition-colors ${
+            className={`min-h-[44px] flex-1 rounded-md px-3 py-2 text-sm font-medium capitalize transition-all duration-150 ${
               filter === f
-                ? "bg-blue-600 text-white"
+                ? "bg-blue-600 text-white shadow-sm"
                 : "text-gray-600 hover:bg-gray-100"
             }`}
           >
@@ -76,7 +76,7 @@ export function TaskList() {
             </p>
           ) : (
             <p className="text-gray-500">
-              No {filter} tasks found.
+              No tasks match the selected filter.
             </p>
           )}
         </div>

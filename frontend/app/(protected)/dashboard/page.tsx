@@ -11,9 +11,9 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
-          <h1 className="text-xl font-bold text-gray-900">Todo App</h1>
-          <div className="flex items-center gap-4">
+        <div className="mx-auto flex max-w-4xl flex-col gap-3 px-4 py-4 md:flex-row md:items-center md:justify-between">
+          <h1 className="text-lg font-bold text-gray-900 md:text-xl">Todo App</h1>
+          <div className="flex items-center gap-3 md:gap-4">
             <span className="text-sm text-gray-600">
               Hello, {session?.user?.name}
             </span>

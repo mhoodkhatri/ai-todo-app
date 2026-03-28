@@ -34,17 +34,17 @@ export function DeleteDialog({ taskTitle, onConfirm, onCancel }: DeleteDialogPro
         <p className="mt-2 text-sm text-gray-600">
           Are you sure you want to delete &ldquo;{taskTitle}&rdquo;? This action cannot be undone.
         </p>
-        <div className="mt-4 flex justify-end gap-2">
+        <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <button
             onClick={onCancel}
-            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="min-h-[44px] rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             autoFocus
-            className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+            className="min-h-[44px] rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
           >
             Delete
           </button>

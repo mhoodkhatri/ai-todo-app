@@ -15,11 +15,13 @@ async function getJwtToken(): Promise<string> {
     credentials: "include",
   });
   if (!res.ok) {
-    throw new Error("Not authenticated");
+    window.location.href = "/signin?expired=true";
+    throw new Error("Session expired");
   }
   const data = await res.json();
   if (!data?.token) {
-    throw new Error("Not authenticated");
+    window.location.href = "/signin?expired=true";
+    throw new Error("Session expired");
   }
   return data.token;
 }
@@ -34,13 +36,34 @@ async function apiFetch<T>(
     "Content-Type": "application/json",
     ...options.headers,
   };
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers,
-  });
+
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers,
+    });
+  } catch (err) {
+    if (err instanceof TypeError) {
+      throw new Error(
+        "Unable to connect to the server. Please check your connection and try again.",
+      );
+    }
+    throw err;
+  }
 
   if (!res.ok) {
+    if (res.status === 401) {
+      window.location.href = "/signin?expired=true";
+      throw new Error("Session expired");
+    }
+
     const body = await res.json().catch(() => null);
+
+    if (res.status >= 500) {
+      throw new Error("Something went wrong. Please try again later.");
+    }
+
     let message = `Request failed (${res.status})`;
     if (Array.isArray(body?.detail)) {
       message = body.detail
