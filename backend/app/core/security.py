@@ -14,7 +14,7 @@ async def _get_jwks() -> dict:
     global _jwks_cache
     if _jwks_cache is not None:
         return _jwks_cache
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(trust_env=False) as client:
         resp = await client.get(f"{settings.FRONTEND_URL}/api/auth/jwks")
         resp.raise_for_status()
         _jwks_cache = resp.json()

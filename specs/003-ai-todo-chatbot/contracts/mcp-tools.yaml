@@ -1,0 +1,138 @@
+# MCP Tool Contracts
+# Server: FastMCP "todo_mcp" (stdio transport)
+# Client: OpenAI Agents SDK (MCPServerStdio)
+#
+# These tools are exposed by the MCP server and called by the AI agent.
+# Each tool accepts user_id as a required parameter for user isolation.
+# Tools return plain text strings (MCP protocol requirement for LLM consumption).
+
+tools:
+  - name: todo_create_task
+    description: >
+      Create a new task for the specified user. Returns confirmation with the
+      created task's ID and title. Use this when the user asks to add, create,
+      or make a new task/todo.
+    annotations:
+      readOnlyHint: false
+      destructiveHint: false
+      idempotentHint: false
+    inputSchema:
+      type: object
+      required: [user_id, title]
+      properties:
+        user_id:
+          type: string
+          description: The authenticated user's ID (MUST match the session user)
+        title:
+          type: string
+          description: Task title (1-200 characters)
+          maxLength: 200
+        description:
+          type: string
+          description: Optional task description (0-1000 characters)
+          maxLength: 1000
+          default: ""
+    returns: "str — Confirmation message with task ID and title"
+    example_output: "✅ Created task 'Buy groceries' (id: 7f3a...)"
+
+  - name: todo_list_tasks
+    description: >
+      List tasks for the specified user with optional filtering. Returns a
+      formatted list of tasks with their IDs, titles, and completion status.
+      Use this when the user asks to see, show, list, or view their tasks.
+    annotations:
+      readOnlyHint: true
+      destructiveHint: false
+      idempotentHint: true
+    inputSchema:
+      type: object
+      required: [user_id]
+      properties:
+        user_id:
+          type: string
+          description: The authenticated user's ID
+        status:
+          type: string
+          description: Filter by status
+          enum: [all, completed, incomplete]
+          default: all
+    returns: "str — Formatted task list or 'No tasks found' message"
+    example_output: |
+      📋 Your tasks (3 total):
+      1. [x] Buy groceries (id: 7f3a...)
+      2. [ ] Write report (id: 9b1c...)
+      3. [ ] Call dentist (id: 4e2d...)
+
+  - name: todo_complete_task
+    description: >
+      Toggle a task's completion status (complete ↔ incomplete). Returns the
+      new status. Use this when the user asks to complete, finish, mark done,
+      undo, or uncomplete a task.
+    annotations:
+      readOnlyHint: false
+      destructiveHint: false
+      idempotentHint: false
+    inputSchema:
+      type: object
+      required: [user_id, task_id]
+      properties:
+        user_id:
+          type: string
+          description: The authenticated user's ID
+        task_id:
+          type: string
+          description: UUID of the task to toggle
+    returns: "str — Confirmation with new completion status"
+    example_output: "✅ Task 'Buy groceries' marked as completed"
+
+  - name: todo_delete_task
+    description: >
+      Permanently delete a task. This action cannot be undone. Returns
+      confirmation. Use this when the user asks to delete, remove, or
+      discard a task.
+    annotations:
+      readOnlyHint: false
+      destructiveHint: true
+      idempotentHint: false
+    inputSchema:
+      type: object
+      required: [user_id, task_id]
+      properties:
+        user_id:
+          type: string
+          description: The authenticated user's ID
+        task_id:
+          type: string
+          description: UUID of the task to delete
+    returns: "str — Confirmation of deletion"
+    example_output: "🗑️ Deleted task 'Buy groceries'"
+
+  - name: todo_update_task
+    description: >
+      Update a task's title and/or description. At least one of title or
+      description must be provided. Returns the updated task details.
+      Use this when the user asks to rename, edit, change, or update a task.
+    annotations:
+      readOnlyHint: false
+      destructiveHint: false
+      idempotentHint: true
+    inputSchema:
+      type: object
+      required: [user_id, task_id]
+      properties:
+        user_id:
+          type: string
+          description: The authenticated user's ID
+        task_id:
+          type: string
+          description: UUID of the task to update
+        title:
+          type: string
+          description: New title (1-200 characters)
+          maxLength: 200
+        description:
+          type: string
+          description: New description (0-1000 characters)
+          maxLength: 1000
+    returns: "str — Confirmation with updated fields"
+    example_output: "📝 Updated task 'Buy groceries' → title: 'Buy organic groceries'"

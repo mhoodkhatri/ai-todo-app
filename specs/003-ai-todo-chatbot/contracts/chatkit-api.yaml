@@ -1,0 +1,135 @@
+# ChatKit API Contract
+# Protocol: ChatKit JSON-RPC over HTTP + SSE
+# Endpoint: POST /chatkit
+#
+# This is NOT a standard REST API. ChatKit uses a JSON-RPC style protocol
+# where the request body contains a `method` field that determines the operation.
+# Streaming responses use Server-Sent Events (SSE).
+#
+# The ChatKit Python SDK (ChatKitServer) handles all request routing internally.
+# We only need to implement: respond(), Store interface, and wire the endpoint.
+
+openapi: "3.1.0"
+info:
+  title: ChatKit API (FastAPI Integration)
+  version: "1.0.0"
+  description: |
+    ChatKit endpoint mounted on FastAPI backend.
+    Request/response format defined by ChatKit protocol.
+    Auth via Bearer JWT token in Authorization header.
+
+paths:
+  /chatkit:
+    post:
+      summary: ChatKit protocol endpoint
+      description: |
+        All ChatKit operations flow through this single endpoint.
+        The ChatKit SDK routes internally based on the request body.
+
+        Streaming operations (send_message) return SSE streams.
+        Non-streaming operations (list_threads, load_thread) return JSON.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/SendMessageRequest'
+                - $ref: '#/components/schemas/ListThreadsRequest'
+                - $ref: '#/components/schemas/LoadThreadRequest'
+                - $ref: '#/components/schemas/DeleteThreadRequest'
+      responses:
+        "200":
+          description: |
+            For streaming requests: SSE stream (text/event-stream)
+            For non-streaming requests: JSON response
+          content:
+            text/event-stream:
+              schema:
+                description: SSE stream of ThreadStreamEvent objects
+            application/json:
+              schema:
+                description: JSON response for CRUD operations
+        "401":
+          description: Missing or invalid JWT token
+        "500":
+          description: Agent or database error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: EdDSA JWT from Better Auth (same as existing task API)
+
+  schemas:
+    SendMessageRequest:
+      type: object
+      description: Send a user message and get streaming AI response
+      properties:
+        method:
+          type: string
+          enum: ["send_message"]
+        params:
+          type: object
+          properties:
+            thread_id:
+              type: string
+              description: Existing conversation ID (null for new conversation)
+              nullable: true
+            input:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: User message text
+                metadata:
+                  type: object
+                  description: Optional metadata (userId, pageContext)
+
+    ListThreadsRequest:
+      type: object
+      description: List user's conversations
+      properties:
+        method:
+          type: string
+          enum: ["list_threads"]
+
+    LoadThreadRequest:
+      type: object
+      description: Load a specific conversation with messages
+      properties:
+        method:
+          type: string
+          enum: ["load_thread"]
+        params:
+          type: object
+          properties:
+            thread_id:
+              type: string
+
+    DeleteThreadRequest:
+      type: object
+      description: Delete a conversation
+      properties:
+        method:
+          type: string
+          enum: ["delete_thread"]
+        params:
+          type: object
+          properties:
+            thread_id:
+              type: string
+
+    # SSE Event Types (emitted during streaming responses)
+    ThreadStreamEvents:
+      description: |
+        Events emitted during a streaming response:
+        - ThreadItemDoneEvent: Complete message ready for persistence
+        - ThreadItemStreamDelta: Incremental token for real-time display
+        - ProgressUpdateEvent: Status update ("Searching tasks...")
+        - ThreadItemReplacedEvent: Updated message
+        - ThreadItemRemovedEvent: Deleted message
