@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     BETTER_AUTH_SECRET: str
     FRONTEND_URL: str = "http://localhost:3000"
+    GEMINI_API_KEY: str = ""
+    GROQ_API_KEY: str = ""
 
 
 settings = Settings()  # type: ignore[call-arg]

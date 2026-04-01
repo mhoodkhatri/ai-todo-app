@@ -9,6 +9,7 @@ from alembic import context
 
 from app.core.config import settings
 from app.models.task import Task  # noqa: F401 — register model metadata
+from app.models.conversation import Conversation, Message  # noqa: F401 — register model metadata
 from sqlmodel import SQLModel
 
 config = context.config

@@ -31,3 +31,12 @@ Thumbs.db
 
 # UV
 .python-version
+
+# Test artifacts
+cookies.txt
+jwt.txt
+curl_result.txt
+curl_update.txt
+
+# Claude Code local config
+.claude/settings.local.json
